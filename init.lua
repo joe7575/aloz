@@ -129,10 +129,10 @@ if minetest.get_modpath("doors") ~= nil then
 	})
 
 	minetest.register_craft({
-		output = "doors:trapdoor 2",
+		output = "aloz:trapdoor_aluminum 2",
 		recipe = {
-			{"group:wood", "group:wood", "group:wood"},
-			{"group:wood", "group:wood", "group:wood"},
+			{"default:aluminum_ingot", "default:aluminum_ingot", "default:aluminum_ingot"},
+			{"default:aluminum_ingot", "default:aluminum_ingot", "default:aluminum_ingot"},
 			{"", "", ""},
 		}
 	})
