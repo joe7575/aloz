@@ -1,64 +1,69 @@
 -- internationalization boilerplate
 local S = minetest.get_translator(minetest.get_current_modname())
+local techage = minetest.global_exists("techage")
 
 ----Aluminum Basics
 
-minetest.register_node("aloz:stone_with_bauxite", {
-	description = S("Bauxite Ore"),
-	tiles = {"default_stone.png^aloz_mineral_bauxite.png"},
-	groups = {cracky = 2, aluminum = 1},
-	drop = "aloz:bauxite_lump 10",
-	sounds = default.node_sound_stone_defaults(),
-})
+if not techage then
+	minetest.register_node("aloz:stone_with_bauxite", {
+		description = S("Bauxite Ore"),
+		tiles = {"default_stone.png^aloz_mineral_bauxite.png"},
+		groups = {cracky = 2, aluminum = 1},
+		drop = "aloz:bauxite_lump 10",
+		sounds = default.node_sound_stone_defaults(),
+	})
 
-function default.register_ores()
-	minetest.register_ore({
-		ore_type = "scatter",
-		ore = "aloz:stone_with_bauxite",
-		wherein = "default:stone",
-		clust_scarcity = 25 * 25 * 25,
-		clust_num_ores = 3,
-		clust_size = 3,
-		y_max = -48,
-		y_min = -512,
+	function default.register_ores()
+		minetest.register_ore({
+			ore_type = "scatter",
+			ore = "aloz:stone_with_bauxite",
+			wherein = "default:stone",
+			clust_scarcity = 25 * 25 * 25,
+			clust_num_ores = 3,
+			clust_size = 3,
+			y_max = -48,
+			y_min = -512,
+		})
+	end
+
+	minetest.register_craftitem("aloz:bauxite_lump", {
+		description = S("Bauxite Lump"),
+		inventory_image = "aloz_bauxite_lump.png"
+	})
+
+	--Aluminum Ingot
+
+	minetest.register_craftitem("aloz:aluminum_ingot", {
+		description = S("Aluminum Ingot"),
+		inventory_image = "aloz_aluminum_ingot.png"
+	})
+
+	minetest.register_craft({
+		type = "cooking",
+		output = "aloz:aluminum_ingot",
+		recipe = "aloz:bauxite_lump",
+		cooktime = 10,
 	})
 end
 
-minetest.register_craftitem("aloz:bauxite_lump", {
-	description = S("Bauxite Lump"),
-	inventory_image = "aloz_bauxite_lump.png"
-})
-
---Aluminum Ingot
-
-minetest.register_craftitem("aloz:aluminum_ingot", {
-	description = S("Aluminum Ingot"),
-	inventory_image = "aloz_aluminum_ingot.png"
-})
-
-minetest.register_craft({
-	type = "cooking",
-	output = "aloz:aluminum_ingot",
-	recipe = "aloz:bauxite_lump",
-    cooktime = 10,
-})
-
 --Aluminum Block
 
-minetest.register_node("aloz:aluminum_block", {
-	description = S("Aluminum Block"),
-	tiles = {"aloz_aluminum_block.png"},
-	is_ground_content = false,
-	groups = {cracky = 1, level = 2, aluminum = 1},
-	sounds = default.node_sound_metal_defaults(),
-})
+if not techage then
+	minetest.register_node("aloz:aluminum_block", {
+		description = S("Aluminum Block"),
+		tiles = {"aloz_aluminum_block.png"},
+		is_ground_content = false,
+		groups = {cracky = 1, level = 2, aluminum = 1},
+		sounds = default.node_sound_metal_defaults(),
+	})
 
-minetest.register_craft({
-	output = "default:aluminum_ingot 9",
-	recipe = {
-		{"aloz:aluminum_block"},
-	}
-})
+	minetest.register_craft({
+		output = "default:aluminum_ingot 9",
+		recipe = {
+			{"aloz:aluminum_block"},
+		}
+	})
+end
 
 --Beam
 minetest.register_node("aloz:aluminum_beam", {
@@ -68,38 +73,64 @@ minetest.register_node("aloz:aluminum_beam", {
 	sounds = default.node_sound_stone_defaults(),
 })
 
-minetest.register_craft({
-	type= "shaped",
-	output = "default:aluminum_beam",
-	recipe = {
-		{"", "aloz:aluminum_block", ""},
-		{"", "aloz:aluminum_block", ""},
-		{"", "aloz:aluminum_block", ""}
-	}
-})
+if techage then
+	minetest.register_craft({
+		type= "shaped",
+		output = "aloz:aluminum_beam",
+		recipe = {
+			{"techage:aluminum", "techage:aluminum", ""},
+			{"techage:aluminum", "techage:aluminum", ""},
+			{"", "", ""}
+		}
+	})
+else
+	minetest.register_craft({
+		type= "shaped",
+		output = "default:aluminum_beam",
+		recipe = {
+			{"", "aloz:aluminum_block", ""},
+			{"", "aloz:aluminum_block", ""},
+			{"", "aloz:aluminum_block", ""}
+		}
+	})
+end
 
 --Doors
 
 if minetest.get_modpath("doors") ~= nil then
-	doors.register("door_aluminum", {
-			tiles = {{ name = "aloz_door_aluminum.png", backface_culling = true }},
-			description = S("Aluminum Door"),
-			inventory_image = "aloz_door_aluminum_inv.png",
-			groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
-			recipe = {
-				{"aloz:aluminum_ingot", "xpanes:pane_flat"},
-				{"aloz:aluminum_ingot", "aloz:aluminum_ingot"},
-				{"aloz:aluminum_ingot", "aloz:trapdoor"},
-			}
-	})
-
+	if techage then
+		doors.register("door_aluminum", {
+				tiles = {{ name = "aloz_door_aluminum.png", backface_culling = true }},
+				description = S("Aluminum Door"),
+				inventory_image = "aloz_door_aluminum_inv.png",
+				groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+				recipe = {
+					{"techage:aluminum", "xpanes:pane_flat"},
+					{"techage:aluminum", "techage:aluminum"},
+					{"techage:aluminum", "aloz:trapdoor_aluminum"},
+				}
+		})
+	else
+		doors.register("door_aluminum", {
+				tiles = {{ name = "aloz_door_aluminum.png", backface_culling = true }},
+				description = S("Aluminum Door"),
+				inventory_image = "aloz_door_aluminum_inv.png",
+				groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+				recipe = {
+					{"aloz:aluminum_ingot", "xpanes:pane_flat"},
+					{"aloz:aluminum_ingot", "aloz:aluminum_ingot"},
+					{"aloz:aluminum_ingot", "aloz:trapdoor"},
+				}
+		})
+	end
+	
 	doors.register("door_green_aluminum", {
 			tiles = {{ name = "aloz_door_green_aluminum.png", backface_culling = true }},
 			description = S("Green Aluminum Door"),
 			inventory_image = "aloz_door_green_aluminum_inv.png",
 			groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
 			recipe = {
-				{"aloz:door_aluminum", "dye:green"},
+				{"doors:door_aluminum", "dye:green"},
 			}
 	})
 
@@ -109,7 +140,7 @@ if minetest.get_modpath("doors") ~= nil then
 			inventory_image = "aloz_door_red_aluminum_inv.png",
 			groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
 			recipe = {
-				{"aloz:door_aluminum", "dye:red"},
+				{"doors:door_aluminum", "dye:red"},
 			}
 	})
 
@@ -128,14 +159,25 @@ if minetest.get_modpath("doors") ~= nil then
 		groups = {cracky = 1, level = 2, door = 1},
 	})
 
-	minetest.register_craft({
-		output = "aloz:trapdoor_aluminum 2",
-		recipe = {
-			{"default:aluminum_ingot", "default:aluminum_ingot", "default:aluminum_ingot"},
-			{"default:aluminum_ingot", "default:aluminum_ingot", "default:aluminum_ingot"},
-			{"", "", ""},
-		}
-	})
+	if techage then
+		minetest.register_craft({
+			output = "aloz:trapdoor_aluminum 4",
+			recipe = {
+				{"techage:aluminum", "techage:aluminum", "techage:aluminum"},
+				{"techage:aluminum", "techage:aluminum", "techage:aluminum"},
+				{"", "", ""},
+			}
+		})
+	else
+		minetest.register_craft({
+			output = "aloz:trapdoor_aluminum 2",
+			recipe = {
+				{"default:aluminum_ingot", "default:aluminum_ingot", "default:aluminum_ingot"},
+				{"default:aluminum_ingot", "default:aluminum_ingot", "default:aluminum_ingot"},
+				{"", "", ""},
+			}
+		})
+	end
 end
 
 local function register_pane(name, def)
@@ -212,7 +254,34 @@ local function register_pane(name, def)
 	})
 end
 
-
+if techage then
+	register_pane("aluminum_railing", {
+		description = S("Aluminum Railing"),
+		textures = {"aloz_aluminum_railing.png", "aloz_aluminum_railing_rl.png", "aloz_aluminum_railing_tb.png"},
+		inventory_image = "aloz_aluminum_railing.png",
+		wield_image = "aloz_aluminum_railing.png",
+		groups = {cracky=2},
+		sounds = default.node_sound_metal_defaults(),
+		recipe = {
+			{"techage:aluminum", "", "techage:aluminum"},
+			{"", "techage:aluminum", ""},
+			{"techage:aluminum", "", "techage:aluminum"}
+		}
+	})
+	register_pane("aluminum_barbed_wire", {
+		description = S("Aluminum Barbed Wire"),
+		textures = {"aloz_barbed_wire.png", "aloz_barbed_wire_rl.png", "aloz_barbed_wire_tb.png"},
+		inventory_image = "aloz_barbed_wire.png",
+		wield_image = "aloz_barbed_wire.png",
+		groups = {cracky=2},
+		sounds = default.node_sound_metal_defaults(),
+		recipe = {
+			{"", "", ""},
+			{"", "", ""},
+			{"techage:aluminum", "xpanes:aluminum_railing_flat", "techage:aluminum"}
+		}
+	})
+else
 	register_pane("aluminum_railing", {
 		description = S("Aluminum Railing"),
 		textures = {"aloz_aluminum_railing.png", "aloz_aluminum_railing_rl.png", "aloz_aluminum_railing_tb.png"},
@@ -237,5 +306,4 @@ end
 			{"aloz:aluminum_ingot", "xpanes:aluminum_railing", ""}
 		}
 	})
-
-
+end

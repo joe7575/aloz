@@ -5,7 +5,7 @@ A new ore and related stuff for Minetest.
 
 - default
 
-optional_depends = doors
+optional_depends = doors, techage
 
 ## License
 
