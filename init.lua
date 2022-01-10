@@ -71,6 +71,7 @@ minetest.register_node("aloz:aluminum_beam", {
 	tiles = {"aloz_beam_top.png", "aloz_beam_top.png", "aloz_beam_side.png"},
 	groups = {cracky = 3, level= 3, aluminum = 1},
 	sounds = default.node_sound_stone_defaults(),
+	paramtype2 = "facedir",
 })
 
 if techage then
